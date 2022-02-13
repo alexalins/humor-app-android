@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Humor</string>
+    <!-- title page -->
+    <string name="title_home">Início</string>
+    <string name="title_profile">Perfil</string>
+    <string name="title_edit_profile">Editar Perfil</string>
+    <string name="title_add_feeling">Adicionar Sentimento</string>
+
+    <string name="text_button_login">Entrar</string>
+    <string name="editar_perfil">Editar Perfil</string>
+    <string name="save_feeling">Salvar Sentimento</string>
+    <string name="edit_profile">Editar Perfil</string>
+</resources>
