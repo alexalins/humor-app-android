@@ -10,4 +10,5 @@
     <color name="color_input">#4E4E4E</color>
     <color name="color_button">#015F78</color>
     <color name="color_backgroud">#323232</color>
+    <color name="color_exit">#C80D0D</color>
 </resources>

@@ -3,6 +3,7 @@ package com.example.humorapp.model;
 import java.util.List;
 
 public class User {
+    private String id;
     private String name;
     private String email;
     private String password;
@@ -11,7 +12,13 @@ public class User {
 
     public User() {
     }
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
     public String getName() {
         return name;
     }

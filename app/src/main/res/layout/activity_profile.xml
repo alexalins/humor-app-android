@@ -52,6 +52,16 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/button3"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/exit"
+            android:textColor="@color/color_exit"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
         <ListView
             android:id="@+id/list_my_feeling"
             android:layout_width="match_parent"

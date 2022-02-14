@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.humorapp.R;
 import com.example.humorapp.adapter.FeelingAdapter;
 import com.example.humorapp.model.Feeling;
+import com.example.humorapp.util.LoginUtil;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,11 @@ public class ProfileActivity extends AppCompatActivity {
         Button btnEdit = findViewById(R.id.button2);
         btnEdit.setOnClickListener(v -> {
             next();
+        });
+
+        Button btnExit = findViewById(R.id.button3);
+        btnExit.setOnClickListener(v -> {
+           exitAccount();
         });
     }
 
@@ -55,6 +61,12 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void next() {
         Intent intent = new Intent(this, EditActivity.class);
+        startActivity(intent);
+    }
+
+    private void exitAccount() {
+        LoginUtil.deleteLogin(getApplicationContext());
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
