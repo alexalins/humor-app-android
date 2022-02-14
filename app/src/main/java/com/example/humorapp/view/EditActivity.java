@@ -18,17 +18,22 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.humorapp.R;
 import com.example.humorapp.model.User;
 import com.example.humorapp.util.LoginUtil;
 import com.example.humorapp.validation.LoginValidation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.squareup.picasso.Picasso;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -41,11 +46,17 @@ public class EditActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String TAG = "LOGIN";
     public static final int PICK_IMAGE = 1;
+    StorageReference storageRef;
+    FirebaseStorage storage;
+    Uri uriImageNew = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+        //
+        storage = FirebaseStorage.getInstance("gs://humor-app-7a94a.appspot.com");
+        storageRef = storage.getReference("images");
         //
         inflateToolbar();
         init();
@@ -59,8 +70,14 @@ public class EditActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         //
         toolbar.setNavigationOnClickListener(v -> {
-            onBackPressed();
+            startActivity(new Intent(this, ProfileActivity.class));
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(this, ProfileActivity.class));
     }
 
     private void init() {
@@ -70,7 +87,8 @@ public class EditActivity extends AppCompatActivity {
         txtUser = findViewById(R.id.editUser);
         txtUser.setText(user.getName());
         image = findViewById(R.id.profile_image_edit);
-        Picasso.get().load(user.getImage()).into(image);
+        Glide.with(this).load(Uri.parse(user.getImage())).into(image);
+        //Picasso.get().load(Uri.parse(user.getImage())).placeholder(R.drawable.ic_icone_fofa_cor).into(image);
         btnEdit = findViewById(R.id.button_editar);
         btnReset = findViewById(R.id.button_reset2);
         btnReset.setOnClickListener(v -> {
@@ -80,30 +98,37 @@ public class EditActivity extends AppCompatActivity {
             getImage();
         });
         btnEdit.setOnClickListener(v -> {
-            upadateUser();
+            update();
         });
     }
 
-    private void upadateUser() {
+    private void  update() {
         if(txtUser.getText() == null || txtUser.getText().equals("")) {
-
+            Toast.makeText(EditActivity.this, "Nome não pode ser vazio", Toast.LENGTH_SHORT).show();
             return;
         }
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(this.user.getImage() == null) {
+            Toast.makeText(EditActivity.this, "Imagem não pode ser vazia", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+       updateUser();
+    }
+    private void updateUser() {
+        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(txtUser.getText().toString())
                 .setPhotoUri(Uri.parse(this.user.getImage()))
                 .build();
 
-        user.updateProfile(profileUpdates)
+        mUser.updateProfile(profileUpdates)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(EditActivity.this, "Usuário atualizado", Toast.LENGTH_SHORT).show();
-                            LoginUtil.saveLogin(user, getApplicationContext());
-                            Log.d(TAG, "User profile updated.");
+                            LoginUtil.saveLogin(mUser, getApplicationContext());
                             Intent intent = new Intent(EditActivity.this, ProfileActivity.class);
                             startActivity(intent);
                         } else {
@@ -111,6 +136,23 @@ public class EditActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void saveImage(Uri uriImage) {
+        StorageReference fileRef = storageRef.child(uriImage.getLastPathSegment());
+        //
+        fileRef.putFile(uriImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                user.setImage(taskSnapshot.getUploadSessionUri().toString());
+                updateUser();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(EditActivity.this, "Erro ao atualizar a foto do usuário", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void resetPassword() {
@@ -124,6 +166,7 @@ public class EditActivity extends AppCompatActivity {
                             Log.d(TAG, "Email sent.");
                             LoginUtil.deleteLogin(getApplicationContext());
                             Intent intent = new Intent(EditActivity.this, LoginActivity.class);
+                            startActivity(intent);
                         } else {
                             Toast.makeText(EditActivity.this, "Não foi possivel enviar o email.", Toast.LENGTH_SHORT).show();
                         }
@@ -136,9 +179,8 @@ public class EditActivity extends AppCompatActivity {
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
         } else {
-            Intent intent = new Intent();
+            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
         }
     }
@@ -147,8 +189,9 @@ public class EditActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE) {
-            Picasso.get().load(data.getData()).into(image);
-            user.setImage(data.getData().toString());
+            //Picasso.get().load(data.getData()).into(image);
+            Glide.with(this).load(data.getData()).into(image);
+            this.user.setImage(data.getData().toString());
         }
     }
 }

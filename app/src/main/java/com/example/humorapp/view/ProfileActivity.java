@@ -13,12 +13,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.humorapp.R;
 import com.example.humorapp.adapter.FeelingAdapter;
 import com.example.humorapp.model.Feeling;
 import com.example.humorapp.model.User;
 import com.example.humorapp.util.LoginUtil;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -46,8 +46,14 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         //
         toolbar.setNavigationOnClickListener(v -> {
-            onBackPressed();
+            startActivity(new Intent(this, HomeActivity.class));
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(this, HomeActivity.class));
     }
 
     private void startAdapter() {
@@ -65,7 +71,8 @@ public class ProfileActivity extends AppCompatActivity {
         user = LoginUtil.getLogin(this);
         txtName.setText(user.getName());
         txtEmail.setText(user.getEmail());
-        Picasso.get().load(user.getImage()).into(image);
+        //Picasso.get().load(Uri.parse(user.getImage())).placeholder(R.drawable.ic_icone_fofa_cor).into(image);
+        Glide.with(this).load(Uri.parse(user.getImage())).into(image);
         //
         Button btnEdit = findViewById(R.id.button2);
         btnEdit.setOnClickListener(v -> {

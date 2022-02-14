@@ -58,4 +58,16 @@ public class User {
     public void setFeelingList(List<Feeling> feelingList) {
         this.feelingList = feelingList;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", image='" + image + '\'' +
+                ", feelingList=" + feelingList +
+                '}';
+    }
 }

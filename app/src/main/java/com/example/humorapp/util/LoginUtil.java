@@ -3,6 +3,7 @@ package com.example.humorapp.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.humorapp.model.User;
 import com.google.firebase.auth.FirebaseUser;
