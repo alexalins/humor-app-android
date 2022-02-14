@@ -26,4 +26,18 @@ public abstract class LoginValidation {
 
         return true;
     }
+
+    public static boolean emailValidation(Editable email, Context context) {
+        if(email == null || email.toString().equals("")) {
+            Toast.makeText(context, "Por favor, insira um email", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if(!email.toString().contains("@")) {
+            Toast.makeText(context, "Por favor, insira email valido", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
+    }
 }

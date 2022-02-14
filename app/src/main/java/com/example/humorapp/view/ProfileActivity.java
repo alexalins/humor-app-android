@@ -4,22 +4,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.humorapp.R;
 import com.example.humorapp.adapter.FeelingAdapter;
 import com.example.humorapp.model.Feeling;
+import com.example.humorapp.model.User;
 import com.example.humorapp.util.LoginUtil;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity {
     ArrayList<Feeling> arrayOfFeeling = new ArrayList<>();
+    ImageView image;
+    TextView txtName, txtEmail;
+    User user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,17 +34,8 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         //
         inflateToolbar();
+        init();
         startAdapter();
-        //
-        Button btnEdit = findViewById(R.id.button2);
-        btnEdit.setOnClickListener(v -> {
-            next();
-        });
-
-        Button btnExit = findViewById(R.id.button3);
-        btnExit.setOnClickListener(v -> {
-           exitAccount();
-        });
     }
 
     private void inflateToolbar() {
@@ -57,6 +55,27 @@ public class ProfileActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.list_my_feeling);
         listView.setAdapter(adapter);
         mockFeeling();
+    }
+
+    private void init() {
+        txtName = findViewById(R.id.textView3);
+        txtEmail = findViewById(R.id.textView4);
+        image = findViewById(R.id.profile_image);
+        //
+        user = LoginUtil.getLogin(this);
+        txtName.setText(user.getName());
+        txtEmail.setText(user.getEmail());
+        Picasso.get().load(user.getImage()).into(image);
+        //
+        Button btnEdit = findViewById(R.id.button2);
+        btnEdit.setOnClickListener(v -> {
+            next();
+        });
+
+        Button btnExit = findViewById(R.id.button3);
+        btnExit.setOnClickListener(v -> {
+            exitAccount();
+        });
     }
 
     private void next() {

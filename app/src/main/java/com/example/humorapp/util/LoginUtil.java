@@ -2,8 +2,10 @@ package com.example.humorapp.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 
 import com.example.humorapp.model.User;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 
 public abstract class LoginUtil {
@@ -14,9 +16,15 @@ public abstract class LoginUtil {
         sharedPref = context.getSharedPreferences(KEY, Context.MODE_PRIVATE);
     }
 
-    public static void saveLogin(String email, Context context) {
+    public static void saveLogin(FirebaseUser userFirebase, Context context) {
         User user = new User();
-        user.setEmail(email);
+        user.setEmail(userFirebase.getEmail());
+        user.setName(userFirebase.getDisplayName());
+        user.setId(userFirebase.getUid());
+        if(userFirebase.getPhotoUrl() != null) {
+            user.setImage(userFirebase.getPhotoUrl().toString());
+        }
+        //
         String jsonUser = new Gson().toJson(user);
         //
         initSharedPref(context);
@@ -26,19 +34,23 @@ public abstract class LoginUtil {
     }
 
     public static void deleteLogin(Context context) {
-
         initSharedPref(context);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.remove(KEY).apply();
     }
 
-    public static String getLogin(Context context) {
+    public static User getLogin(Context context) {
         initSharedPref(context);
-        return sharedPref.getString(KEY, "");
+        String userJson = sharedPref.getString(KEY, "");
+        if(!userJson.equals("")) {
+            User user = new Gson().fromJson(userJson, User.class);
+            return user;
+        }
+        return null;
     }
 
     public static boolean isExist(Context context) {
-        if(getLogin(context) == null || getLogin(context).equals("")) {
+        if(getLogin(context) == null) {
             return false;
         }
 

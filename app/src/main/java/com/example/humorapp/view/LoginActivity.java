@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button btnLogin;
+    private Button btnLogin, btnReset;
     private EditText inputEmail, inputPassword;
     private ProgressBar progressBar;
     //
@@ -52,6 +52,11 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> {
             login();
         });
+
+        btnReset = findViewById(R.id.button_reset);
+        btnReset.setOnClickListener(v -> {
+            resetPassword();
+        });
     }
 
     private void next() {
@@ -64,9 +69,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
-        progressBar.setVisibility(View.VISIBLE);
-        showProgress(true);
         if (LoginValidation.emailAndPasswordValidation(inputEmail.getText(), inputPassword.getText(), this)) {
+            showProgress(true);
             String email = inputEmail.getText().toString();
             String password = inputPassword.getText().toString();
             mAuth.signInWithEmailAndPassword(email, password)
@@ -76,13 +80,32 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Log.i(TAG, "signInWithCustomToken:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                LoginUtil.saveLogin(email, getApplicationContext());
+                                LoginUtil.saveLogin(user, getApplicationContext());
                                 showProgress(false);
                                 next();
                             } else {
                                 showProgress(false);
                                 Log.i(TAG, "signInWithCustomToken:failure", task.getException());
                                 Toast.makeText(LoginActivity.this, "Falha ao realizar o login", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void resetPassword() {
+        if(LoginValidation.emailValidation(inputEmail.getText(), this)) {
+            showProgress(true);
+            mAuth.sendPasswordResetEmail(inputEmail.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            showProgress(false);
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, "Email enviado", Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "Email sent.");
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Não foi possivel enviar o email.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

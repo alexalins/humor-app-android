@@ -42,6 +42,19 @@
             android:textStyle="bold"
             android:textAlignment="center"/>
 
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nome"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textAlignment="center"/>
+
         <Button
             android:id="@+id/button2"
             style="@style/Widget.MaterialComponents.Button.TextButton"
