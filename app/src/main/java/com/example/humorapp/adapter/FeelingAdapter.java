@@ -1,8 +1,6 @@
 package com.example.humorapp.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.humorapp.R;
 import com.example.humorapp.model.Feeling;
 
@@ -33,10 +32,7 @@ public class FeelingAdapter extends ArrayAdapter<Feeling> {
         TextView txtAuthor = (TextView) convertView.findViewById(R.id.textAuthor);
         TextView txtDate = (TextView) convertView.findViewById(R.id.textDate);
         //
-        Resources resources = convertView.getContext().getResources();
-        int resourceId = resources.getIdentifier("ic_icone_fofa_cor", "drawable",
-                convertView.getContext().getPackageName());
-        image.setImageResource(resourceId);
+        Glide.with(getContext()).load(feeling.getImage()).into(image);
         txtFeeling.setText(feeling.getName());
         if(feeling.getUser() != null) {
             txtAuthor.setText(feeling.getUser().getName());
