@@ -1,27 +1,43 @@
 package com.example.humorapp.view;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.humorapp.R;
 import com.example.humorapp.adapter.FeelingAdapter;
+import com.example.humorapp.adapter.ItemAddAdpater;
 import com.example.humorapp.model.Feeling;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class AddFeelingActivity extends AppCompatActivity {
     ArrayList<Feeling> arrayOfFeeling = new ArrayList<Feeling>();
+    ProgressBar progressBar;
+    private static final String TAG = "HUMOR";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_feeling);
+        progressBar = findViewById(R.id.progressBar3);
+        progressBar = findViewById(R.id.progressBar3);
         //
         inflateToolbar();
-        startAdapter();
+        init();
     }
 
     private void inflateToolbar() {
@@ -35,34 +51,38 @@ public class AddFeelingActivity extends AppCompatActivity {
             onBackPressed();
         });
     }
-    private void startAdapter() {
-        FeelingAdapter adapter = new FeelingAdapter(this, arrayOfFeeling);
-        ListView listView = (ListView) findViewById(R.id.list_add_feeling);
-        listView.setAdapter(adapter);
-        mockFeeling();
+
+    private void showProgress(boolean show) {
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    private void mockFeeling() {
-        Feeling feeling1 = new Feeling();
-        feeling1.setName("Sentimento 1");
-        Feeling feeling2 = new Feeling();
-        feeling2.setName("Sentimento 2");
-        Feeling feeling3 = new Feeling();
-        feeling3.setName("Sentimento 3");
-        Feeling feeling4 = new Feeling();
-        feeling4.setName("Sentimento 4");
-        Feeling feeling5 = new Feeling();
-        feeling5.setName("Sentimento 5");
-        Feeling feeling6 = new Feeling();
-        feeling6.setName("Sentimento 6");
+    private void init() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://humor-app-7a94a-default-rtdb.firebaseio.com");
+        DatabaseReference ref = database.getReference("feeling");
+        showProgress(true);
         //
-        arrayOfFeeling.add(feeling1);
-        arrayOfFeeling.add(feeling2);
-        arrayOfFeeling.add(feeling3);
-        arrayOfFeeling.add(feeling4);
-        arrayOfFeeling.add(feeling5);
-        arrayOfFeeling.add(feeling6);
-        arrayOfFeeling.addAll(arrayOfFeeling);
-        arrayOfFeeling.addAll(arrayOfFeeling);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()){
+                    Feeling value = data.getValue(Feeling.class);
+                    arrayOfFeeling.add(value);
+                }
+                showProgress(false);
+                startAdapter();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                showProgress(false);
+                Log.i(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
+
+    private void startAdapter() {
+        ItemAddAdpater adapter = new ItemAddAdpater(this, arrayOfFeeling);
+        GridView gridView = findViewById(R.id.list_add_feeling);
+        gridView.setAdapter(adapter);
     }
 }
