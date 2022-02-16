@@ -80,6 +80,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 showProgress(false);
+                Toast.makeText(getApplicationContext(), "Erro listar os sentimentos.", Toast.LENGTH_LONG).show();
                 Log.i(TAG, "Failed to read value.", error.toException());
             }
         });
