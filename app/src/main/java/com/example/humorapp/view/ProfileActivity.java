@@ -1,39 +1,55 @@
 package com.example.humorapp.view;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.humorapp.R;
 import com.example.humorapp.adapter.FeelingAdapter;
+import com.example.humorapp.adapter.ItemAddAdpater;
 import com.example.humorapp.model.Feeling;
+import com.example.humorapp.model.Item;
 import com.example.humorapp.model.User;
 import com.example.humorapp.util.LoginUtil;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ProfileActivity extends AppCompatActivity {
-    ArrayList<Feeling> arrayOfFeeling = new ArrayList<>();
-    ImageView image;
-    TextView txtName, txtEmail;
-    User user = null;
+    private ArrayList<Item> arrayOfItem;
+    private ImageView image;
+    private TextView txtName, txtEmail;
+    private ProgressBar progressBar;
+    private User user = null;
+    private static final String TAG = "HUMOR";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        this.arrayOfItem  = new ArrayList<>();
         //
         inflateToolbar();
         init();
-        startAdapter();
+        initList();
     }
 
     private void inflateToolbar() {
@@ -53,23 +69,50 @@ public class ProfileActivity extends AppCompatActivity {
         super.onBackPressed();
         startActivity(new Intent(this, HomeActivity.class));
     }
+    private void initList() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://humor-app-7a94a-default-rtdb.firebaseio.com");
+        DatabaseReference ref = database.getReference("my-feeling");
+        showProgress(true);
+        //
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()){
+                    Item value = data.getValue(Item.class);
+                    if(value.getUser().getId().equals(user.getId())) {
+                        arrayOfItem.add(value);
+                    }
+                }
+                //trocando a posicao para os novos ficaram como primeiros
+                Collections.reverse(arrayOfItem);
+                showProgress(false);
+                startAdapter();
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                showProgress(false);
+                startAdapter();
+                Toast.makeText(getApplicationContext(), "Erro listar os sentimentos.", Toast.LENGTH_LONG).show();
+                Log.i(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
     private void startAdapter() {
-        FeelingAdapter adapter = new FeelingAdapter(this, arrayOfFeeling);
+        ItemAddAdpater adapter = new ItemAddAdpater(this, arrayOfItem);
         ListView listView = (ListView) findViewById(R.id.list_my_feeling);
         listView.setAdapter(adapter);
-        mockFeeling();
     }
 
     private void init() {
         txtName = findViewById(R.id.textView3);
         txtEmail = findViewById(R.id.textView4);
         image = findViewById(R.id.profile_image);
+        progressBar = findViewById(R.id.progressBar4);
         //
         user = LoginUtil.getLogin(this);
         txtName.setText(user.getName());
         txtEmail.setText(user.getEmail());
-        //Picasso.get().load(Uri.parse(user.getImage())).placeholder(R.drawable.ic_icone_fofa_cor).into(image);
         Glide.with(this).load(Uri.parse(user.getImage())).into(image);
         //
         Button btnEdit = findViewById(R.id.button2);
@@ -94,27 +137,7 @@ public class ProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void mockFeeling() {
-        Feeling feeling1 = new Feeling();
-        feeling1.setName("Sentimento 1");
-        Feeling feeling2 = new Feeling();
-        feeling2.setName("Sentimento 2");
-        Feeling feeling3 = new Feeling();
-        feeling3.setName("Sentimento 3");
-        Feeling feeling4 = new Feeling();
-        feeling4.setName("Sentimento 4");
-        Feeling feeling5 = new Feeling();
-        feeling5.setName("Sentimento 5");
-        Feeling feeling6 = new Feeling();
-        feeling6.setName("Sentimento 6");
-        //
-        arrayOfFeeling.add(feeling1);
-        arrayOfFeeling.add(feeling2);
-        arrayOfFeeling.add(feeling3);
-        arrayOfFeeling.add(feeling4);
-        arrayOfFeeling.add(feeling5);
-        arrayOfFeeling.add(feeling6);
-        arrayOfFeeling.addAll(arrayOfFeeling);
-        arrayOfFeeling.addAll(arrayOfFeeling);
+    private void showProgress(boolean show) {
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 }

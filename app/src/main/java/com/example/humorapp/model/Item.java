@@ -6,7 +6,7 @@ import java.util.Date;
 public class Item {
     private User user;
     private Feeling feeling;
-    private Date date;
+    private String date;
 
     public User getUser() {
         return user;
@@ -24,17 +24,20 @@ public class Item {
         this.feeling = feeling;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public String getDateFormatada() {
-        SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");
-        String dateFormatada = formatador.format(date);
-        return dateFormatada;
+    @Override
+    public String toString() {
+        return "Item{" +
+                "user=" + user +
+                ", feeling=" + feeling +
+                ", date='" + date + '\'' +
+                '}';
     }
 }

@@ -28,7 +28,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class AddFeelingActivity extends AppCompatActivity {
@@ -117,9 +120,13 @@ public class AddFeelingActivity extends AppCompatActivity {
     private void save() {
         try {
             DatabaseReference ref = database.getReference("my-feeling");
-            ref.child("user").setValue(user);
-            ref.child("feeling").setValue(feeling);
-            ref.child("date").setValue(new Date());
+            //
+            String dateStamp = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+            String timeStamp = new SimpleDateFormat("HHmmss").format(Calendar.getInstance().getTime());
+            //
+            ref.child(timeStamp).child("user").setValue(user);
+            ref.child(timeStamp).child("feeling").setValue(feeling);
+            ref.child(timeStamp).child("date").setValue(dateStamp);
             Toast.makeText(this, "Sentimento Salvo.", Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, HomeActivity.class));
         } catch (Exception e) {

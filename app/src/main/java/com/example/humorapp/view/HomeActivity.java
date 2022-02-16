@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -74,8 +75,9 @@ public class HomeActivity extends AppCompatActivity {
                     Item value = data.getValue(Item.class);
                     arrayOfItem.add(value);
                 }
-                Item vazio = new Item();
-                arrayOfItem.add(vazio);
+
+                //trocando a posicao para os novos ficaram como primeiros
+                Collections.reverse(arrayOfItem);
                 showProgress(false);
                 startAdapter();
             }
@@ -83,6 +85,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 showProgress(false);
+                startAdapter();
                 Toast.makeText(getApplicationContext(), "Erro listar os sentimentos.", Toast.LENGTH_LONG).show();
                 Log.i(TAG, "Failed to read value.", error.toException());
             }

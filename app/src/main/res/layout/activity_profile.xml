@@ -75,6 +75,12 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
+        <ProgressBar
+            android:id="@+id/progressBar4"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <ListView
             android:id="@+id/list_my_feeling"
             android:layout_width="match_parent"
