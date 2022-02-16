@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -25,7 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class AddFeelingActivity extends AppCompatActivity {
-    ArrayList<Feeling> arrayOfFeeling = new ArrayList<Feeling>();
+    ArrayList<Feeling> arrayOfFeeling = new ArrayList<>();
     ProgressBar progressBar;
     private static final String TAG = "HUMOR";
 
@@ -84,5 +86,16 @@ public class AddFeelingActivity extends AppCompatActivity {
         ItemAddAdpater adapter = new ItemAddAdpater(this, arrayOfFeeling);
         GridView gridView = findViewById(R.id.list_add_feeling);
         gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                v.setSelected(true);
+            }
+        });
+    }
+
+    private void resetSelect(View v) {
+        v.setBackground(v.getResources().getDrawable(R.drawable.rounded_corner_add_item));
     }
 }

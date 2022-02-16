@@ -11,7 +11,7 @@
         android:layout_marginBottom="5sp"
         android:layout_marginRight="5sp"
         android:layout_marginLeft="5sp"
-        android:background="@drawable/rounded_corner_add_item"
+        android:background="@drawable/item_select"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
