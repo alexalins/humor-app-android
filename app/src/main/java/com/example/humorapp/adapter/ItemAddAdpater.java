@@ -18,9 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemAddAdpater extends ArrayAdapter<Item> {
+    private ArrayList<Item> itens;
 
-    public ItemAddAdpater(Context context, ArrayList<Item> users) {
-        super(context, 0, users);
+    public ItemAddAdpater(Context context, ArrayList<Item> itens) {
+        super(context, 0, itens);
+        this.itens = itens;
     }
 
     @Override
@@ -49,5 +51,10 @@ public class ItemAddAdpater extends ArrayAdapter<Item> {
         }
         //
         return convertView;
+    }
+
+    public void remove(int position) {
+        itens.remove(position);
+        notifyDataSetChanged();
     }
 }

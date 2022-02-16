@@ -34,11 +34,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mAuth = FirebaseAuth.getInstance();
         //
         if(LoginUtil.isExist(this)) {
             next();
         } else {
+            mAuth = FirebaseAuth.getInstance();
             init();
         }
     }
