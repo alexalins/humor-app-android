@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,32 +14,62 @@ import com.example.humorapp.R;
 import com.example.humorapp.model.Feeling;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class FeelingAdapter extends ArrayAdapter<Feeling> {
+public class FeelingAdapter extends BaseAdapter {
+    private Context context;
+    private List<Feeling> listFeeling;
 
-    public FeelingAdapter(Context context, ArrayList<Feeling> users) {
-        super(context, 0, users);
+    public FeelingAdapter(Context context, List<Feeling> listFeeling) {
+        this.context = context;
+        this.listFeeling = listFeeling;
+    }
+
+    @Override
+    public int getCount() {
+        return listFeeling.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return listFeeling.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return listFeeling.get(position).getId();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Feeling feeling = getItem(position);
+
+        Feeling feeling = (Feeling) getItem(position);
+
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_feeling, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_grid_feeling, parent, false);
         }
         //
         ImageView image = (ImageView) convertView.findViewById(R.id.imageFeeling);
         TextView txtFeeling = (TextView) convertView.findViewById(R.id.textFeeling);
-        TextView txtAuthor = (TextView) convertView.findViewById(R.id.textAuthor);
-        TextView txtDate = (TextView) convertView.findViewById(R.id.textDate);
         //
         Glide.with(getContext()).load(feeling.getImage()).into(image);
         txtFeeling.setText(feeling.getName());
-        if(feeling.getUser() != null) {
-            txtAuthor.setText(feeling.getUser().getName());
-            txtDate.setText(feeling.getDate().toString());
-        }
-        // Return the completed view to render on screen
         return convertView;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public List<Feeling> getListFeeling() {
+        return listFeeling;
+    }
+
+    public void setListFeeling(List<Feeling> listFeeling) {
+        this.listFeeling = listFeeling;
     }
 }

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.humorapp.R;
+import com.example.humorapp.adapter.FeelingAdapter;
 import com.example.humorapp.adapter.ItemAddAdpater;
 import com.example.humorapp.model.Feeling;
 import com.example.humorapp.model.User;
@@ -100,7 +101,7 @@ public class AddFeelingActivity extends AppCompatActivity {
     }
 
     private void startAdapter() {
-        ItemAddAdpater adapter = new ItemAddAdpater(this, arrayOfFeeling);
+        FeelingAdapter adapter = new FeelingAdapter(this, arrayOfFeeling);
         GridView gridView = findViewById(R.id.list_add_feeling);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -116,8 +117,8 @@ public class AddFeelingActivity extends AppCompatActivity {
     private void save() {
         try {
             DatabaseReference ref = database.getReference("my-feeling");
-            ref.child("userId").setValue(user.getId());
-            ref.child("feelingId").setValue(feeling.getId());
+            ref.child("user").setValue(user);
+            ref.child("feeling").setValue(feeling);
             ref.child("date").setValue(new Date());
             Toast.makeText(this, "Sentimento Salvo.", Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, HomeActivity.class));

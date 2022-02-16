@@ -1,21 +1,16 @@
 package com.example.humorapp.model;
 
-import java.util.Date;
-
 public class Feeling {
     private Long id;
     private String name;
     private String image;
-    private Date date;
-    private User user;
 
     public Feeling() {
     }
 
-    public Feeling(String name, String image, Date date) {
+    public Feeling(String name, String image) {
         this.name = name;
         this.image = image;
-        this.date = date;
     }
 
     public Long getId() {
@@ -42,28 +37,11 @@ public class Feeling {
         this.image = image;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     @Override
     public String toString() {
         return "Feeling{" +
                 "name='" + name + '\'' +
                 ", image='" + image + '\'' +
-                ", date=" + date +
                 '}';
     }
 }

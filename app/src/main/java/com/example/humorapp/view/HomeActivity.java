@@ -17,7 +17,9 @@ import android.widget.Toast;
 
 import com.example.humorapp.R;
 import com.example.humorapp.adapter.FeelingAdapter;
+import com.example.humorapp.adapter.ItemAddAdpater;
 import com.example.humorapp.model.Feeling;
+import com.example.humorapp.model.Item;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -33,13 +35,14 @@ public class HomeActivity extends AppCompatActivity {
     private BottomAppBar appbar;
     private FloatingActionButton btnAdd;
     private ProgressBar progressBar;
-    private ArrayList<Feeling> arrayOfFeeling = new ArrayList<>();
+    private ArrayList<Item> arrayOfItem;
     private static final String TAG = "HUMOR";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        arrayOfItem = new ArrayList<>();
         //
         inflateToolbar();
         startItem();
@@ -61,18 +64,18 @@ public class HomeActivity extends AppCompatActivity {
 
     private void init() {
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://humor-app-7a94a-default-rtdb.firebaseio.com");
-        DatabaseReference ref = database.getReference("feeling");
+        DatabaseReference ref = database.getReference("my-feeling");
         showProgress(true);
         //
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()){
-                    Feeling value = data.getValue(Feeling.class);
-                    arrayOfFeeling.add(value);
+                    Item value = data.getValue(Item.class);
+                    arrayOfItem.add(value);
                 }
-                Feeling vazio = new Feeling();
-                arrayOfFeeling.add(vazio);
+                Item vazio = new Item();
+                arrayOfItem.add(vazio);
                 showProgress(false);
                 startAdapter();
             }
@@ -111,7 +114,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void startAdapter() {
-        FeelingAdapter adapter = new FeelingAdapter(this, arrayOfFeeling);
+        ItemAddAdpater adapter = new ItemAddAdpater(this, arrayOfItem);
         ListView listView = (ListView) findViewById(R.id.list_feeling);
         listView.setAdapter(adapter);
     }
