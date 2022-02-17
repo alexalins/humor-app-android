@@ -57,9 +57,10 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void inflateToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         TextView txtTitleBar = findViewById(R.id.title_bar);
         txtTitleBar.setText(getResources().getString(R.string.title_home));
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
     }
 

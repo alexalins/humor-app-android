@@ -60,6 +60,7 @@ public class AddFeelingActivity extends AppCompatActivity {
         TextView txtTitleBar = findViewById(R.id.title_bar);
         txtTitleBar.setText(getResources().getString(R.string.title_add_feeling));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         //
         toolbar.setNavigationOnClickListener(v -> {

@@ -67,6 +67,7 @@ public class EditActivity extends AppCompatActivity {
         TextView txtTitleBar = findViewById(R.id.title_bar);
         txtTitleBar.setText(getResources().getString(R.string.title_edit_profile));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         //
         toolbar.setNavigationOnClickListener(v -> {
