@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Item {
+    private String id;
     private User user;
     private Feeling feeling;
     private String date;
@@ -32,10 +33,19 @@ public class Item {
         this.date = date;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "Item{" +
-                "user=" + user +
+                "id=" + id +
+                ", user=" + user +
                 ", feeling=" + feeling +
                 ", date='" + date + '\'' +
                 '}';

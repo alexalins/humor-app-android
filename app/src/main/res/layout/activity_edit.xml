@@ -137,7 +137,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginRight="20dp"
             android:background="@drawable/rounded_coner_button"
-            android:text="@string/edit_profile"
+            android:text="@string/edit_profile_okay"
             android:textColor="@color/white" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,8 +9,8 @@
     <string name="text_button_login">Entrar</string>
     <string name="text_button_reset">Recuperar Senha</string>
     <string name="text_button_reset2">Mudar Senha</string>
-    <string name="editar_perfil">Editar Perfil</string>
     <string name="exit">Sair</string>
     <string name="save_feeling">Salvar Sentimento</string>
     <string name="edit_profile">Editar Perfil</string>
+    <string name="edit_profile_okay">Concluir</string>
 </resources>

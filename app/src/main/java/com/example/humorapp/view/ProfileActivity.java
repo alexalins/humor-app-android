@@ -30,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
@@ -44,12 +45,18 @@ public class ProfileActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private User user = null;
     private static final String TAG = "HUMOR";
+    FirebaseDatabase database;
+    DatabaseReference ref;
+    private ItemAddAdpater adapter;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        this.arrayOfItem  = new ArrayList<>();
+        //
+        database = FirebaseDatabase.getInstance("https://humor-app-7a94a-default-rtdb.firebaseio.com");
+        ref = database.getReference("my-feeling");
         //
         inflateToolbar();
         init();
@@ -57,7 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void inflateToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         TextView txtTitleBar = findViewById(R.id.title_bar);
         txtTitleBar.setText(getResources().getString(R.string.title_profile));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -74,8 +81,7 @@ public class ProfileActivity extends AppCompatActivity {
         startActivity(new Intent(this, HomeActivity.class));
     }
     private void initList() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance("https://humor-app-7a94a-default-rtdb.firebaseio.com");
-        DatabaseReference ref = database.getReference("my-feeling");
+        this.arrayOfItem  = new ArrayList<>();
         showProgress(true);
         //
         ref.addValueEventListener(new ValueEventListener() {
@@ -84,6 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()){
                     Item value = data.getValue(Item.class);
                     if(value.getUser().getId().equals(user.getId())) {
+                        value.setId(data.getKey());
                         arrayOfItem.add(value);
                     }
                 }
@@ -98,15 +105,17 @@ public class ProfileActivity extends AppCompatActivity {
                 showProgress(false);
                 startAdapter();
                 Toast.makeText(getApplicationContext(), "Erro listar os sentimentos.", Toast.LENGTH_LONG).show();
-                Log.i(TAG, "Failed to read value.", error.toException());
             }
         });
     }
     private void startAdapter() {
-        ItemAddAdpater adapter = new ItemAddAdpater(this, arrayOfItem);
-        ListView listView = findViewById(R.id.list_my_feeling);
+        adapter = new ItemAddAdpater(this, arrayOfItem);
+        listView = findViewById(R.id.list_my_feeling);
         listView.setAdapter(adapter);
-        //
+        remove();
+    }
+
+    private void remove() {
         final SwipeToDismissTouchListener<ListViewAdapter> touchListener =
                 new SwipeToDismissTouchListener<>(
                         new ListViewAdapter(listView),
@@ -118,7 +127,15 @@ public class ProfileActivity extends AppCompatActivity {
 
                             @Override
                             public void onDismiss(ListViewAdapter view, int position) {
-                                adapter.remove(position);
+                                Item itemDelete = arrayOfItem.get(position);
+                                try {
+                                    ref.child(itemDelete.getId()).removeValue();
+                                    arrayOfItem = new ArrayList<>();
+                                    Toast.makeText(ProfileActivity.this, "Sentimento deletado.", Toast.LENGTH_LONG).show();
+                                } catch (Exception e) {
+                                    Toast.makeText(ProfileActivity.this, "Erro ao deletar seu sentimento.", Toast.LENGTH_LONG).show();
+                                }
+
                             }
                         });
 
@@ -129,8 +146,6 @@ public class ProfileActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (touchListener.existPendingDismisses()) {
                     touchListener.undoPendingDismiss();
-                } else {
-                    Toast.makeText(ProfileActivity.this, "Position " + position, Toast.LENGTH_LONG).show();
                 }
             }
         });
