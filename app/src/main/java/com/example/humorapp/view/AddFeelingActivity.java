@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,17 +21,19 @@ import com.example.humorapp.adapter.ItemAddAdpater;
 import com.example.humorapp.model.Feeling;
 import com.example.humorapp.model.User;
 import com.example.humorapp.util.LoginUtil;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class AddFeelingActivity extends AppCompatActivity {
     private ArrayList<Feeling> arrayOfFeeling = new ArrayList<>();
@@ -53,6 +54,23 @@ public class AddFeelingActivity extends AppCompatActivity {
         inflateToolbar();
         startItem();
         init();
+    }
+
+    private void updateToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+                        String token = task.getResult();
+                        Log.d(TAG, "Pegou Token");
+                        String uid = FirebaseAuth.getInstance().getUid();
+                        
+                    }
+                });
     }
 
     private void inflateToolbar() {

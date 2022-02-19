@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -65,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(LoginActivity.this.getWindow().getCurrentFocus().getWindowToken(), 0);
         if (LoginValidation.emailAndPasswordValidation(inputEmail.getText(), inputPassword.getText(), this)) {
             showProgress(true);
             String email = inputEmail.getText().toString();
